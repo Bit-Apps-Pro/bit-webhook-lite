@@ -7,7 +7,7 @@ import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import {ChakraProvider} from '@chakra-ui/react'
 import Master from './Pages/Layouts/Master'
-
+import BroadcastWebhook from './Components/webhook/BroadcastWebhook';
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({
@@ -22,9 +22,12 @@ createInertiaApp({
         root.render(
         <ChakraProvider>
             <App {...props} />
+            <BroadcastWebhook/>
         </ChakraProvider>
+       
         );
     },
 });
 
 InertiaProgress.init({ color: '#4B5563' });
+{/* <EchoComp/> */}
