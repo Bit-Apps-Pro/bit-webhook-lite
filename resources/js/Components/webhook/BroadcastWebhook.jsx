@@ -4,10 +4,11 @@ import socketio from "socket.io-client";
 import { $logs } from '../GlobalStates/GlobalStates';
 export default function BroadcastWebhook(){
 const [logs, setLogs] = useAtom($logs)
-const { VITE_WS_HOST } = import.meta.env
+const { VITE_WS_HOST, VITE_WS_PATH } = import.meta.env
 // useEffect(() => {
 const echo =new Echo({
-    host: VITE_WS_HOST + ':6001',
+    host: VITE_WS_HOST,
+    path: `${VITE_WS_PATH}/socket.io`,
     // path: window.location.pathname + 'socket.io',
     broadcaster: "socket.io",
     client: socketio,
