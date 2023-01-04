@@ -102,12 +102,11 @@ export default function Home() {
 
         <GridItem pl="2" area="main" ml={126}>
           <Flex w={600} mt={2} gap="2">
-            <Input value={value} />
+            <Input value={value} readOnly />
             <Button onClick={onCopy}><Icon as={CopyIcon} /></Button>
             <AlertMdl 
               isOpen={isOpen}
               setIsOpen={setIsOpen}
-              ref={cancelRef}
               title="Generate new URL"
               body={(<><h1>Are you sure you want to generate new URL?</h1><br/><p><strong>Note</strong>: This this will change the URL and you will lose previous log data. </p></>)}
               action={action}
