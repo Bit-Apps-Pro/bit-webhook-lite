@@ -4,10 +4,10 @@ import socketio from "socket.io-client";
 import { $logs } from '../GlobalStates/GlobalStates';
 export default function BroadcastWebhook(){
 const [logs, setLogs] = useAtom($logs)
-
+const { VITE_WS_HOST } = import.meta.env
 // useEffect(() => {
 const echo =new Echo({
-    host: 'http://127.0.0.1' + ':6001',
+    host: VITE_WS_HOST + ':6001',
     // path: window.location.pathname + 'socket.io',
     broadcaster: "socket.io",
     client: socketio,
@@ -17,7 +17,7 @@ const echo =new Echo({
 
 echo.channel('webhook-log-event')
 .listen('.webhookLogEvent', (e) => {
-  if(logs === []){
+  if(logs === false){
       const webhookLg={id:e.id, webhook_details:e.webhook_details, seen:1}
       logs.push(webhookLg)
       setLogs(logs)
