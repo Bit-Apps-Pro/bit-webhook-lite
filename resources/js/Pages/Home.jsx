@@ -95,7 +95,6 @@ export default function Home() {
           color="black"
           boxShadow="base"
           w="280px"
-          p={2}
           mt={1}
         >
           <Logs />
@@ -116,7 +115,7 @@ export default function Home() {
               />
             <Button onClick={()=>setIsOpen(true)}><Icon as={RepeatIcon} boxSize={3} /></Button>
           </Flex>
-          <SimpleGrid columns={2} spacing={2} mt={2}>
+          <SimpleGrid columns={2} mt={2}>
             {logs.length !== 0 && (
               <>
                <RequestBody />
