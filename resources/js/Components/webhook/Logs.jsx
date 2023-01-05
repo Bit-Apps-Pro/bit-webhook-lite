@@ -40,7 +40,7 @@ export default function Logs() {
     <Scrollbars style={{  height: '100%' }}> 
     <div className="px-3">
         {logs.length > 0 && logs?.map(log => (
-            <LinkBox key={log.id} onClick={()=>logView(log.id)}>
+            <LinkBox key={log.id} onClick={()=>logView(log.id)} cursor='pointer'>
                 <Box key={log.id} display="block" boxShadow='md' p='6' rounded='md' border={'2px solid RGBA(0, 0, 0, 0.36)'}  bg={colorMode(log.id)} mt={2} >
                     <List spacing={1}>
                       {log.seen === 0 && (
@@ -82,7 +82,6 @@ export default function Logs() {
                   </List>
                 </Box>
             </LinkBox>
-        
         ))}
     {logs.length === 0 && <Text><Spinner size="sm"  spacing={4} label="Loading..."/> Loading...</Text>}
     </div>
