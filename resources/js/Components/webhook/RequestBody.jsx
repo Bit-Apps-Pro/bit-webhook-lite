@@ -129,7 +129,7 @@ export default function RequestBody() {
           <h2>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
-                { webHookDeatis?.headers?.[contentType][0] ==='text/plain' ? (
+                { webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0] === 'text/plain' ? (
                     <Text fontWeight="bold">Raw Content </Text>
                 ):(
                   <Text fontWeight="bold">Form Data</Text>
@@ -142,7 +142,7 @@ export default function RequestBody() {
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            {webHookDeatis?.headers?.[contentType][0] ==='text/plain' ? (
+            {webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0] ==='text/plain' ? (
               <pre>
               {JSON.stringify(webHookDeatis?.form_data, null, 2)}
               </pre>
