@@ -15,15 +15,17 @@ class WebhookLogEvent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $data;
+    public $channel;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($channelName, $data)
     {
         $this->data = $data;
+        $this->channel = $channelName;
     }
 
     /**
@@ -34,7 +36,7 @@ class WebhookLogEvent implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('channel-name');
-        return new Channel('webhook-log-event');
+        return new Channel($this->channel.'-webhook-log-event');
     }
 
     public function broadcastAs()

@@ -117,17 +117,12 @@ class WebHookController extends Controller {
 
          $details = $this->getReqeuestDetails($request);
 
-         $data = [
-             'id'              => uniqid(),
-             'webhook_details' => $details,
-         ];
-
-         broadcast(new \App\Events\WebhookLogEvent([
+         broadcast(new \App\Events\WebhookLogEvent($urlSlugId,[
                 'id'=>uniqid(),
                 'webhook_details'=>json_encode($details),
          ]));
 
-         return response()->json(['success' => true, 'message' => 'Webhook data received successfully', 'data' => $data]);
+         return response()->json(['success' => true, 'data' => []]);
      }
 
 }
