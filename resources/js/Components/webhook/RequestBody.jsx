@@ -8,20 +8,21 @@ import { $currentLog } from '../GlobalStates/GlobalStates';
 export default function RequestBody() {
   const [currentLog] = useAtom($currentLog);
   const toast = useToast();
-  const contentType='content-type'
-  
+  const contentType = 'content-type'
+
   const webHookDeatis = currentLog ? JSON.parse(currentLog.webhook_details) : {};
-  const onCopy = (e, copyValue)=>{
+  const isRawData = () => webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0].indexOf('form-data') !== -1
+  const onCopy = (e, copyValue) => {
     e.stopPropagation()
     const copy = navigator.clipboard.writeText(JSON.stringify(copyValue))
-    copy.then(()=>{
+    copy.then(() => {
       toast({
         title: 'Copied',
         duration: 9000,
         isClosable: true,
         position: 'bottom-right',
         variant: '#000',
-        containerStyle: {bg: '#000', color:'white', borderRadius:'5px'}
+        containerStyle: { bg: '#000', color: 'white', borderRadius: '5px' }
       });
     }
     )
@@ -36,19 +37,19 @@ export default function RequestBody() {
       created_at: webHookDeatis?.created_at,
     }
     const copy = navigator.clipboard.writeText(JSON.stringify(requestDetails))
-    copy.then(()=>{
+    copy.then(() => {
       toast({
         title: 'Copied',
         duration: 9000,
         isClosable: true,
         position: 'bottom-right',
         variant: '#000',
-        containerStyle: {bg: '#000', color:'white', borderRadius:'5px'}
+        containerStyle: { bg: '#000', color: 'white', borderRadius: '5px' }
       });
     }
     )
   }
-  
+  console.log('webHookDeatis?.form_data', webHookDeatis?.form_data)
 
   return (
     <Box p={4} shadow="md" borderWidth="1px">
@@ -60,7 +61,7 @@ export default function RequestBody() {
                 <Text fontWeight="bold">Request Information</Text>
               </Box>
               <Box as="span" flex="1" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={(e)=>requestDetailsCopy(e)} border={0}><Icon as={CopyIcon} /></Button>
+                <Button className="mr-2" variant="outline" size="sm" onClick={(e) => requestDetailsCopy(e)} border={0}><Icon as={CopyIcon} /></Button>
               </Box>
               <AccordionIcon />
             </AccordionButton>
@@ -101,7 +102,12 @@ export default function RequestBody() {
                 <Text fontWeight="bold">Query Params</Text>
               </Box>
               <Box as="span" flex="" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={(e)=>onCopy(e, webHookDeatis.query_params)} border={0}><Icon as={CopyIcon} /></Button>
+                <Button className="mr-2" variant="outline" size="sm"
+                  onClick={(e) => onCopy(e, webHookDeatis.query_params)}
+                  border={0}
+                >
+                  <Icon as={CopyIcon} />
+                </Button>
               </Box>
               <AccordionIcon />
             </AccordionButton>
@@ -110,7 +116,7 @@ export default function RequestBody() {
             <TableContainer whiteSpace="normal">
               <Table size="sm">
                 <Tbody>
-                <Tr>
+                  <Tr>
                     <Td>Key</Td>
                     <Td>Value</Td>
                   </Tr>
@@ -129,40 +135,40 @@ export default function RequestBody() {
           <h2>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
-                { webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0] === 'text/plain' ? (
-                    <Text fontWeight="bold">Raw Content </Text>
-                ):(
+                {isRawData ? (
+                  <Text fontWeight="bold">Raw Content </Text>
+                ) : (
                   <Text fontWeight="bold">Form Data</Text>
-                ) }
+                )}
               </Box>
               <Box as="span" flex="1" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={(e)=>onCopy(e, webHookDeatis.form_data)} border={0}><Icon as={CopyIcon} /></Button>
+                <Button className="mr-2" variant="outline" size="sm" onClick={(e) => onCopy(e, webHookDeatis.form_data)} border={0}><Icon as={CopyIcon} /></Button>
               </Box>
               <AccordionIcon />
             </AccordionButton>
           </h2>
-          <AccordionPanel pb={4}>
-            {webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0] ==='text/plain' ? (
+          <AccordionPanel pb={4} overflow={'scroll'}>
+            {isRawData ? (
               <pre>
-              {JSON.stringify(webHookDeatis?.form_data, null, 2)}
+                {JSON.stringify(webHookDeatis?.form_data, null, 2)}
               </pre>
-            ):(
+            ) : (
               <TableContainer whiteSpace="normal">
-              <Table size="sm">
-                <Tbody>
-                  <Tr>
-                    <Td>Key</Td>
-                    <Td>Value</Td>
-                  </Tr>
-                  {webHookDeatis?.form_data && Object.keys(webHookDeatis?.form_data).map((key, index) => (
-                    <Tr key={index}>
-                      <Td>{key}</Td>
-                      <Td>{webHookDeatis?.form_data[key]}</Td>
+                <Table size="sm">
+                  <Tbody>
+                    <Tr>
+                      <Td>Key</Td>
+                      <Td>Value</Td>
                     </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
+                    {webHookDeatis?.form_data && Object.keys(webHookDeatis?.form_data).map((key, index) => (
+                      <Tr key={index}>
+                        <Td>{key}</Td>
+                        <Td>{webHookDeatis?.form_data[key]}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
             )}
           </AccordionPanel>
         </AccordionItem>
