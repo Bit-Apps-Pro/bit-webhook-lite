@@ -7,6 +7,7 @@ import { $currentLog } from '../GlobalStates/GlobalStates';
 
 export default function RequestBody() {
   const [currentLog] = useAtom($currentLog);
+  const { hasCopied, onCopy: handleCopy } = useClipboard()
   const toast = useToast();
   const contentType = 'content-type'
 
@@ -14,7 +15,7 @@ export default function RequestBody() {
   const isRawData = () => webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0].indexOf('form-data') !== -1
   const onCopy = (e, copyValue) => {
     e.stopPropagation()
-    const copy = navigator.clipboard.writeText(JSON.stringify(copyValue, null, 2))
+    const copy = navigator.clipboard.writeText(JSON.stringify(copyValue))
     copy.then(() => {
       toast({
         title: 'Copied',
@@ -129,47 +130,6 @@ export default function RequestBody() {
                 </Tbody>
               </Table>
             </TableContainer>
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
-          <h2>
-            <AccordionButton>
-              <Box as="span" flex="1" textAlign="left">
-                {isRawData ? (
-                  <Text fontWeight="bold">Raw Content </Text>
-                ) : (
-                  <Text fontWeight="bold">Form Data</Text>
-                )}
-              </Box>
-              <Box as="span" flex="1" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={(e) => onCopy(e, webHookDeatis.form_data)} border={0}><Icon as={CopyIcon} /></Button>
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4} overflow={'scroll'}>
-            {isRawData ? (
-              <pre>
-                {JSON.stringify(webHookDeatis?.form_data, null, 2)}
-              </pre>
-            ) : (
-              <TableContainer whiteSpace="normal">
-                <Table size="sm">
-                  <Tbody>
-                    <Tr>
-                      <Td>Key</Td>
-                      <Td>Value</Td>
-                    </Tr>
-                    {webHookDeatis?.form_data && Object.keys(webHookDeatis?.form_data).map((key, index) => (
-                      <Tr key={index}>
-                        <Td>{key}</Td>
-                        <Td>{webHookDeatis?.form_data[key]}</Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            )}
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

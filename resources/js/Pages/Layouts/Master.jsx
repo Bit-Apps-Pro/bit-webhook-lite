@@ -4,12 +4,12 @@ import Header from './Header';
 export default function Master({ title, children }) {
 
   return (
-    <main>
+    <>
       <Head title={title} />
         <Grid
         templateAreas={`"header header" "nav main" "nav footer"`}
         gridTemplateRows={'50px 1fr 30px'}
-        gridTemplateColumns={'150px 1fr'}
+        gridTemplateColumns={'0.5fr 2fr'}
         minH='100vh'
         gap={1}
         color='blackAlpha.700'
@@ -21,6 +21,6 @@ export default function Master({ title, children }) {
         </GridItem>
         {children}
       </Grid>
-    </main>
+    </>
   )
 }

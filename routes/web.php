@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/create/url', [UrlSlugGenerateController::class, 'createNewRandomURl'])->name('create-url');
-Route::any('/api/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
+// Route::any('/api/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
 Route::get('/url/refresh', [UrlSlugGenerateController::class, 'refreshUrl'])->name('refresh-url');
 
 require __DIR__.'/auth.php';

@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\URL;
 /**
  * WebHookController
  */
-class WebHookController extends Controller {
+class WebHookController extends Controller
+{
     /**
      * getWebHookData
      *
@@ -46,36 +47,37 @@ class WebHookController extends Controller {
     //     return $fileLinks;
     // }
 
-//    public function fileValidation($files, $data) {
+    //    public function fileValidation($files, $data) {
 
-//        if (empty($files)) {
-//            return;
-//        }
+    //        if (empty($files)) {
+    //            return;
+    //        }
 
-//        $rules = [];
-//        $messages = [];
-//        foreach ($files as $key => $file) {
+    //        $rules = [];
+    //        $messages = [];
+    //        foreach ($files as $key => $file) {
 
-//            if (is_array($file)) {
-//                $rules[$key.'.*'] = 'max:5120';
-//                $messages[$key.'.*.max'] = 'The :attribute may not be greater than 5MB.';
-//            } else {
-//                $rules[$key] = 'max:5120';
-//                $messages[$key.'.max'] = 'The :attribute may not be greater than 5MB.';
-//            }
+    //            if (is_array($file)) {
+    //                $rules[$key.'.*'] = 'max:5120';
+    //                $messages[$key.'.*.max'] = 'The :attribute may not be greater than 5MB.';
+    //            } else {
+    //                $rules[$key] = 'max:5120';
+    //                $messages[$key.'.max'] = 'The :attribute may not be greater than 5MB.';
+    //            }
 
-//        }
+    //        }
 
-//        $validator = Validator::make($data, $rules, $messages);
-//        if ($validator->fails()) {
-//            return response()->json(['success' => false, 'message' => $validator->errors()]);
-//        }
-//    }
+    //        $validator = Validator::make($data, $rules, $messages);
+    //        if ($validator->fails()) {
+    //            return response()->json(['success' => false, 'message' => $validator->errors()]);
+    //        }
+    //    }
 
-    public function getReqeuestDetails($request) {
+    public function getReqeuestDetails($request)
+    {
         $queryParams = $request->query();
         $formData = $request->post();
-    
+
         $headers = $request->header();
         $method = $request->method();
         $url = URL::full();
@@ -87,7 +89,7 @@ class WebHookController extends Controller {
         }
 
         if (isset($headers['content-type']) && $headers['content-type'][0] == 'text/plain') {
-           $formData = json_decode($request->getContent(), true);
+            $formData = json_decode($request->getContent(), true);
         }
 
         $dateTime = new DateTime();
@@ -106,23 +108,23 @@ class WebHookController extends Controller {
         ];
     }
 
-     public function getWebHookData(Request $request) {
-         $urlSlugId = substr($request->url(), strrpos($request->url(), '/') + 1);
-        
-         $isValidURL = UrlSlugGenerate::where('url_slug', $urlSlugId)->first();
+    public function getWebHookData(Request $request, $url_slug)
+    {
+        // $url_slug = substr($request->url(), strrpos($request->url(), '/') + 1);
 
-         if (! $isValidURL) {
-             return response()->json(['success' => false, 'message' => 'Invalid URL']);
-         }
+        $isValidURL = UrlSlugGenerate::where('url_slug', $url_slug)->first();
 
-         $details = $this->getReqeuestDetails($request);
+        if (!$isValidURL) {
+            return response()->json(['success' => false, 'message' => 'Invalid URL']);
+        }
 
-         broadcast(new \App\Events\WebhookLogEvent($urlSlugId,[
-                'id'=>uniqid(),
-                'webhook_details'=>json_encode($details),
-         ]));
+        $details = $this->getReqeuestDetails($request);
+        $rayID = uniqid();
+        broadcast(new \App\Events\WebhookLogEvent($url_slug, [
+            'id' => $rayID,
+            'webhook_details' => json_encode($details),
+        ]));
 
-         return response()->json(['success' => true, 'data' => []]);
-     }
-
+        return response()->json(['success' => true, 'data' => ['rID' => $rayID]]);
+    }
 }
