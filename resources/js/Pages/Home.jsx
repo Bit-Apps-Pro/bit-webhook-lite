@@ -13,6 +13,7 @@ import {
 import { usePage } from '@inertiajs/inertia-react';
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
+import QueryParams from '../Components/webhook/QueryParams';
 import Master from './Layouts/Master';
 
 export default function Home() {
@@ -89,7 +90,7 @@ export default function Home() {
   }
 
   return (
-    <Master title="WELCOME">
+    <Master title="Test your outgoing webhook">
       <GridItem
         area="nav"
         bg="white"
@@ -127,11 +128,12 @@ export default function Home() {
           />
           <Button onClick={() => setIsOpen(true)}><Icon as={RepeatIcon} boxSize={3} /></Button>
         </Flex>
-        <SimpleGrid columns={2} mt={2}>
+        <SimpleGrid columns={2} mt={2} templateAreas={`"param rheader" "rbody rbody"`}>
           {logs.length !== 0 && (
             <>
-              <RequestBody />
+              <QueryParams />
               <RequestHeader />
+              <RequestBody />
             </>
           )}
         </SimpleGrid>

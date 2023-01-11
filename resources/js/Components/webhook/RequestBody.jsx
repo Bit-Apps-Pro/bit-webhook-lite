@@ -1,5 +1,5 @@
 import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Icon, Table, TableContainer, Tbody, Td, Text, Tr, useClipboard, useToast,
+  Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, GridItem, Icon, Table, TableContainer, Tbody, Td, Text, Tr, useClipboard, useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { CopyIcon } from '@chakra-ui/icons';
@@ -9,9 +9,15 @@ export default function RequestBody() {
   const [currentLog] = useAtom($currentLog);
   const toast = useToast();
   const contentType = 'content-type'
+  const defaultOpen = [0]
 
-  const webHookDeatis = currentLog ? JSON.parse(currentLog.webhook_details) : {};
-  const isRawData = () => webHookDeatis?.headers?.[contentType] && webHookDeatis?.headers?.[contentType][0].indexOf('form-data') !== -1
+
+  const webHookDetails = currentLog ? JSON.parse(currentLog.webhook_details) : {};
+  if (webHookDetails.query_params) {
+    defaultOpen.push(1)
+  }
+  const isRawData = () => webHookDetails?.headers?.[contentType] && webHookDetails?.headers?.[contentType][0].indexOf('form-data') === -1
+  console.log('isRawData', isRawData())
   const onCopy = (e, copyValue) => {
     e.stopPropagation()
     const copy = navigator.clipboard.writeText(JSON.stringify(copyValue, null, 2))
@@ -30,11 +36,11 @@ export default function RequestBody() {
   const requestDetailsCopy = (e) => {
     e.stopPropagation()
     const requestDetails = {
-      url: webHookDeatis?.url,
-      method: webHookDeatis?.method,
+      url: webHookDetails?.url,
+      method: webHookDetails?.method,
       id: currentLog?.id,
-      ip: webHookDeatis?.ip,
-      created_at: webHookDeatis?.created_at,
+      ip: webHookDetails?.ip,
+      created_at: webHookDetails?.created_at,
     }
     const copy = navigator.clipboard.writeText(JSON.stringify(requestDetails, null, 2))
     copy.then(() => {
@@ -49,108 +55,30 @@ export default function RequestBody() {
     }
     )
   }
-  console.log('webHookDeatis?.form_data', webHookDeatis?.form_data)
 
   return (
-    <Box p={4} shadow="md" borderWidth="1px">
-      <Accordion defaultIndex={[0]} allowMultiple>
+    <GridItem p={4} shadow="md" borderWidth="1px" area={'rbody'}>
+      <Accordion defaultIndex={defaultOpen} allowMultiple>
         <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
           <h2>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
-                <Text fontWeight="bold">Request Information</Text>
-              </Box>
-              <Box as="span" flex="1" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={requestDetailsCopy} border={0}><Icon as={CopyIcon} /></Button>
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <TableContainer whiteSpace="normal">
-              <Table size="sm">
-                <Tbody>
-                  <Tr>
-                    <Td>URL</Td>
-                    <Td>{webHookDeatis?.url}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Method</Td>
-                    <Td>{webHookDeatis?.method}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>ID</Td>
-                    <Td>{currentLog?.id}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>IP address</Td>
-                    <Td>{webHookDeatis?.ip}</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Created Time</Td>
-                    <Td>{webHookDeatis?.created_at}</Td>
-                  </Tr>
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
-          <h2>
-            <AccordionButton>
-              <Box as="span" flex="1" textAlign="left">
-                <Text fontWeight="bold">Query Params</Text>
-              </Box>
-              <Box as="span" flex="" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm"
-                  onClick={(e) => onCopy(e, webHookDeatis.query_params)}
-                  border={0}
-                >
-                  <Icon as={CopyIcon} />
-                </Button>
-              </Box>
-              <AccordionIcon />
-            </AccordionButton>
-          </h2>
-          <AccordionPanel pb={4}>
-            <TableContainer whiteSpace="normal">
-              <Table size="sm">
-                <Tbody>
-                  <Tr>
-                    <Td>Key</Td>
-                    <Td>Value</Td>
-                  </Tr>
-                  {webHookDeatis?.query_params && Object.keys(webHookDeatis?.query_params).map((key, index) => (
-                    <Tr key={index}>
-                      <Td>{key}</Td>
-                      <Td>{webHookDeatis?.query_params[key]}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
-          <h2>
-            <AccordionButton>
-              <Box as="span" flex="1" textAlign="left">
-                {isRawData ? (
+                {isRawData() ? (
                   <Text fontWeight="bold">Raw Content </Text>
                 ) : (
                   <Text fontWeight="bold">Form Data</Text>
                 )}
               </Box>
               <Box as="span" flex="1" textAlign="right">
-                <Button className="mr-2" variant="outline" size="sm" onClick={(e) => onCopy(e, webHookDeatis.form_data)} border={0}><Icon as={CopyIcon} /></Button>
+                <Button className="mr-2" variant="outline" size="sm" onClick={(e) => onCopy(e, webHookDetails.form_data)} border={0}><Icon as={CopyIcon} /></Button>
               </Box>
               <AccordionIcon />
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4} overflow={'scroll'}>
-            {isRawData ? (
+            {isRawData() ? (
               <pre>
-                {JSON.stringify(webHookDeatis?.form_data, null, 2)}
+                {JSON.stringify(webHookDetails?.form_data, null, 2)}
               </pre>
             ) : (
               <TableContainer whiteSpace="normal">
@@ -160,10 +88,10 @@ export default function RequestBody() {
                       <Td>Key</Td>
                       <Td>Value</Td>
                     </Tr>
-                    {webHookDeatis?.form_data && Object.keys(webHookDeatis?.form_data).map((key, index) => (
+                    {webHookDetails?.form_data && Object.keys(webHookDetails?.form_data).map((key, index) => (
                       <Tr key={index}>
                         <Td>{key}</Td>
-                        <Td>{webHookDeatis?.form_data[key]}</Td>
+                        <Td>{webHookDetails?.form_data[key]}</Td>
                       </Tr>
                     ))}
                   </Tbody>
@@ -173,6 +101,6 @@ export default function RequestBody() {
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-    </Box>
+    </GridItem>
   );
 }

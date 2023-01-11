@@ -18,7 +18,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', [HomeController::class,'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -32,4 +32,4 @@ Route::get('/create/url', [UrlSlugGenerateController::class, 'createNewRandomURl
 // Route::any('/api/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
 Route::get('/url/refresh', [UrlSlugGenerateController::class, 'refreshUrl'])->name('refresh-url');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

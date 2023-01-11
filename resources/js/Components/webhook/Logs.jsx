@@ -76,7 +76,7 @@ export default function Logs() {
               {/* </Box> */}
             </LinkBox>
           ))}
-          {logs.length === 0 && <Text><Spinner size="sm" spacing={4} label="Loading..." /> Loading...</Text>}
+          {logs.length === 0 && <Text align={'center'}><Spinner size="sm" spacing={4} label="waiting..." />  waiting for request...</Text>}
         </VStack>
       </Scrollbars>
 

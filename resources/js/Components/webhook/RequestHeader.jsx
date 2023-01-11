@@ -1,6 +1,6 @@
 import { CopyIcon } from '@chakra-ui/icons';
 import {
-  Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Icon, Table, TableContainer, Tbody, Td, Text, Tr, useToast,
+  Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, GridItem, Icon, Table, TableContainer, Tbody, Td, Text, Tr, useToast,
 } from '@chakra-ui/react';
 import { useAtom } from 'jotai';
 import { $currentLog } from '../GlobalStates/GlobalStates';
@@ -12,7 +12,7 @@ export default function RequestHeader() {
 
   const onCopy = (e)=>{
     e.stopPropagation()
-    const copy = navigator.clipboard.writeText(JSON.stringify(webHookDeatis?.headers), null, 2)
+    const copy = navigator.clipboard.writeText(JSON.stringify(webHookDeatis?.headers, null, 2))
     copy.then(()=>{
       toast({
         title: 'Copied',
@@ -27,7 +27,7 @@ export default function RequestHeader() {
   }
 
   return (
-    <Box p={4} shadow="md" borderWidth="1px">
+    <GridItem p={4} shadow="md" borderWidth="1px" area={'rheader'}>
       <Accordion defaultIndex={[0]} allowMultiple>
         <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
           <h2>
@@ -57,6 +57,6 @@ export default function RequestHeader() {
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-    </Box>
+    </GridItem>
   );
 }

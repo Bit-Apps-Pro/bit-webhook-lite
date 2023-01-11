@@ -9,7 +9,7 @@ export default function Master({ title, children }) {
         <Grid
         templateAreas={`"header header" "nav main" "nav footer"`}
         gridTemplateRows={'50px 1fr 30px'}
-        gridTemplateColumns={'0.5fr 2fr'}
+        gridTemplateColumns={'0.1fr 1fr'}
         minH='100vh'
         gap={1}
         color='blackAlpha.700'
