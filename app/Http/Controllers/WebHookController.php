@@ -108,7 +108,7 @@ class WebHookController extends Controller
     {
         $queryParams = $request->query();
         $formData = $request->post();
-        if ($content = $request->getContent()) {
+        if (($content = $request->getContent()) && empty($formData)) {
             $decoded = json_decode($content, true);
             if (json_last_error()) {
                 $formData['body_content'] = $content;
