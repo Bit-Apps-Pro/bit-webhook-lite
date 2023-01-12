@@ -1,8 +1,9 @@
-import { Flex, Heading, Stack, useColorMode } from '@chakra-ui/react';
+import { Flex, Heading, LinkBox, Stack, useColorMode } from '@chakra-ui/react';
+import { Link } from '@inertiajs/inertia-react';
 
 export default function Header() {
   return (
-      <Flex
+    <Flex
       as="nav"
       align="center"
       justify="space-between"
@@ -10,13 +11,15 @@ export default function Header() {
       padding={2}
       bg="white.100"
       color="black"
-      boxShadow='base' 
-      // rounded='md'
-      // {...props}
+      boxShadow='base'
+    // rounded='md'
+    // {...props}
     >
       <Flex align="center" mr={5}>
         <Heading as="h1" size="lg" letterSpacing={"tighter"}>
-          Webhook
+          <Link href={route('home')}>
+            Webhook
+          </Link>
         </Heading>
       </Flex>
 
@@ -29,7 +32,7 @@ export default function Header() {
         flexGrow={1}
         mt={{ base: 4, md: 0 }}
       >
-    
+        <Link href={route('outgoing.view')}>Outgoing</Link>
       </Stack>
     </Flex>
   )

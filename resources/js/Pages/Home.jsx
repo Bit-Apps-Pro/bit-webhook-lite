@@ -64,6 +64,7 @@ export default function Home() {
       .then((res) => {
         if (res.success === true) {
           setWebhookLogs([]);
+          localStorage.setItem('bit_rID', '{}')
           setToken(res?.uniqueId);
           setValue(`${app?.APP_URL}/api/v1/${res?.uniqueId}`)
           toast({
@@ -90,7 +91,7 @@ export default function Home() {
   }
 
   return (
-    <Master title="Test your outgoing webhook">
+    <Master title="Test your webhook">
       <GridItem
         area="nav"
         bg="white"

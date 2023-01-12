@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TempFileController;
 use App\Http\Controllers\UrlSlugGenerateController;
 use App\Http\Controllers\WebHookController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 /*
@@ -29,7 +31,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/create/url', [UrlSlugGenerateController::class, 'createNewRandomURl'])->name('create-url');
+
+Route::get('/outgoing', [WebHookController::class, 'outgoingView'])->name('outgoing.view');
+
 // Route::any('/api/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
 Route::get('/url/refresh', [UrlSlugGenerateController::class, 'refreshUrl'])->name('refresh-url');
 
+Route::get('/tmp/{path}', [TempFileController::class, 'handleDownload'])->name('tmp');
 require __DIR__ . '/auth.php';

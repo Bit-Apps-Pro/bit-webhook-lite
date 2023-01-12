@@ -11,6 +11,11 @@ export default function Logs() {
   const remove = (e, id) => {
     e.stopPropagation()
     const temp = logs.filter(log => log.id !== id)
+    const stored = JSON.parse(localStorage.getItem('bit_rID') || '{}')
+    if (Object.hasOwn(stored, id)) {
+      delete stored[id]
+      localStorage.setItem('bit_rID', JSON.stringify(stored))
+    }
     setWebHookLogs([...temp])
   }
 

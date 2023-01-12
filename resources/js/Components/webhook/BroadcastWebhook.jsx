@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import socketio from "socket.io-client";
 import { $logs, $randomUrl } from '../GlobalStates/GlobalStates';
 export default function BroadcastWebhook() {
-  const [logs, setLogs] = useAtom($logs)
+  const [, setLogs] = useAtom($logs)
   const [randomURL] = useAtom($randomUrl)
   const { VITE_WS_HOST, VITE_WS_PATH } = import.meta.env
 
