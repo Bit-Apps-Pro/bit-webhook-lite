@@ -13,7 +13,7 @@ export default function RequestHeader() {
   const onCopy = (e)=>{
     e.stopPropagation()
     const copy = navigator.clipboard.writeText(JSON.stringify(webHookDeatis?.headers, null, 2))
-    copy.then(()=>{
+    copy.then(()=> {
       toast({
         title: 'Copied',
         duration: 9000,

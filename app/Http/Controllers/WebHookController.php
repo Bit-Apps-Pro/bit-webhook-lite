@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Logs;
 use App\Models\UrlSlugGenerate;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -43,7 +45,7 @@ class WebHookController extends Controller
                     $fileLinks[$requestParamName][$index] = $this->getTempUrl($disk, $file, 2);
                 }
             } elseif (!empty($files)) {
-                $disk->putFileAs($request->url_slug, $files, $files->hashName());
+                $disk->putFileAs('', $files, $files->hashName());
                 $fileLinks[$requestParamName] = $this->getTempUrl($disk, $files, 2);
             }
         }
@@ -171,10 +173,18 @@ class WebHookController extends Controller
 
     public function outgoingView()
     {
-        return Inertia::render('Outgoing', [
-            'canLogin'    => route('login'),
-            'canRegister' => route('register'),
-            'phpVersion'  => PHP_VERSION,
-        ]);
+        return Inertia::render('Outgoing');
+    }
+
+    public function handleProxy(Request $request)
+    {
+        dd($request->all());
+        $client = new Client(['headers' => ['Authorization' => "Zoho-oauthtoken $accessToken"]]);
+        // $client->s
+        try {
+            $apiResponse = $client->get("https://www.zohoapis.{$queryParams['dataCenter']}/crm/v2/settings/layouts?module={$queryParams['module_api_name']}");
+        } catch (RequestException $e) {
+            return (string) $e->getResponse()->getBody();
+        }
     }
 }

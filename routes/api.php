@@ -19,4 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::any('/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
+Route::post('/proxy', [WebHookController::class, 'handleProxy'])->name('proxy');
+
 

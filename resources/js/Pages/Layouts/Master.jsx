@@ -8,7 +8,7 @@ export default function Master({ title, children }) {
       <Head title={title} />
         <Grid
         templateAreas={`"header header" "nav main" "nav footer"`}
-        gridTemplateRows={'50px 1fr 30px'}
+        gridTemplateRows={'0.15fr 5fr 0.1fr'}
         gridTemplateColumns={'0.1fr 1fr'}
         minH='100vh'
         gap={1}

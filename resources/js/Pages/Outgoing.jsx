@@ -1,5 +1,5 @@
 import AlertMdl from '@/Components/AlertMdl';
-import { $logs, $randomUrl } from '@/Components/GlobalStates/GlobalStates';
+import { $randomUrl, $proxied } from '@/Components/GlobalStates/GlobalStates';
 import Logs from '@/Components/webhook/Logs';
 import RequestBody from '@/Components/webhook/RequestBody';
 import RequestHeader from '@/Components/webhook/RequestHeader';
@@ -11,7 +11,9 @@ import {
   Link,
   FormControl,
   FormLabel,
-  VStack
+  VStack,
+  Switch,
+  Tooltip
 } from '@chakra-ui/react';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { useAtom } from 'jotai';
@@ -20,35 +22,105 @@ import QueryParams from '../Components/webhook/QueryParams';
 import Master from './Layouts/Master';
 
 export default function Outgoing() {
-  const [token, setToken] = useAtom($randomUrl);
+  const [token] = useAtom($randomUrl);
+  const [isProxying, setIsProxying] = useAtom($proxied);
   const toast = useToast();
-  const [logs, setWebhookLogs] = useAtom($logs);
-  const [isOpen, setIsOpen] = useState();
   const { app } = usePage().props;
-  const { onCopy, value, setValue, hasCopied } = useClipboard(`${app?.APP_URL}/api/v1/${token}`);
-  const { data, setData, post, processing, errors, reset } = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-  });
+  const { onCopy, hasCopied } = useClipboard(`${app?.APP_URL}/api/v1/${token}`);
+  const [requestData, setRequestData] = useState({
+    url: `${app?.APP_URL}/api/v1/${token}`,
+    method: 'POST',
+    headers: {},
+    contentType: 'multipart/form-data',
+    params: {},
+    formData: {},
+    urlencoded: {},
+    raw: '',
+    bodyType: 'formData'
+  })
 
-  useEffect(() => {
-    return () => {
-      reset('password', 'password_confirmation');
-    };
-  }, []);
+  const getRequestOptions = () => {
+    let options = {}
+    /* {
+          headers: getRequestHeaders(),
+          url: requestData.url,
+          body: getRequestBody(),
+          method: getRequestMethod(),
+          params: getRequestParams()
+        } */
+    if (isProxying) {
+      options = {
+        method: 'POST',
+        body: JSON.stringify(requestData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    } else {
+      options = {
+        headers: { ...getRequestHeaders(), ...getRequestContentType() },
+        url: requestData.url,
+        body: getRequestBody(),
+        method: getRequestMethod()
+      }
+    }
+    console.log('options', options)
+    return options
+  }
 
-  const onHandleChange = (event) => {
-    setData(event.target.name, event.target.type === 'checkbox' ? event.target.checked : event.target.value);
-  };
+  const getRequestURL = () => {
+    return isProxying ? route('proxy') : requestData.url
+  }
 
+  const getRequestHeaders = () => {
+    return requestData?.headers || {}
+  }
+
+  const getRequestParams = () => {
+    return requestData?.params || {}
+  }
+
+  const getRequestContentType = () => {
+    return requestData.bodyType === 'formData' ? {} : (requestData?.contentType || {})
+  }
+
+  const getRequestMethod = () => {
+    return requestData?.method || 'POST'
+  }
+
+  const getRequestBody = () => {
+    if (requestData?.bodyType
+      && requestData[requestData.bodyType]
+    ) {
+      return requestData.bodyType === 'formData' ? processFormData() : (
+        typeof requestData[requestData.bodyType] === 'string' ? requestData[requestData.bodyType] : JSON.stringify(requestData[requestData.bodyType])
+      )
+    }
+    return ''
+  }
+
+  const processFormData = () => {
+    const formData = new FormData()
+    Object.keys(requestData.formData).forEach(key => formData.set(key, requestData.formData[key]))
+    return formData
+  }
+  const onChange = (event) => {
+    const tempData = { ...requestData }
+    if (!tempData?.formData) {
+      tempData.formData = {}
+    }
+    tempData.formData[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    setRequestData(tempData)
+  }
+
+  const setRequestURL = (event) => {
+    const tempData = { ...requestData }
+    tempData.url = event.target.value;
+    setRequestData(tempData)
+  }
   const submit = (e) => {
     e.preventDefault();
-    fetch(`${app?.APP_URL}/api/v1/${token}`, {
-      method: 'POST',
-      body: data instanceof FormData ? data : JSON.stringify(data),
-    })
+    fetch(getRequestURL(), getRequestOptions())
       .then((res) => {
         toast({ variant: '#000', description: 'Sended!', position: 'bottom-right', containerStyle: { bg: '#000', color: 'white', borderRadius: '5px' } });
       })
@@ -56,13 +128,13 @@ export default function Outgoing() {
   };
 
   hasCopied && toast({ variant: '#000', description: 'Copied', position: 'bottom-right', containerStyle: { bg: '#000', color: 'white', borderRadius: '5px' } });
-
+  console.log('isProxying', isProxying)
   return (
     <Master title="Test your outgoing webhook">
       <GridItem pl="2" area="main">
         <Flex w={600} mt={2} gap="2" alignItems={'baseline'}>
           <InputGroup>
-            <Input value={value} readOnly />
+            <Input value={requestData.url} onChange={setRequestURL} />
             <InputRightElement>
               <Button
                 bg={'none'}
@@ -73,6 +145,15 @@ export default function Outgoing() {
             </InputRightElement>
           </InputGroup>
           <Button onClick={submit}>Send</Button>
+          <Tooltip
+            label='proxy request through webhook.is to bypass cors'
+            placement='right-end'
+            hasArrow
+            rounded={'md'}
+            shouldWrapChildren
+          >
+            <Switch id='proxy' onChange={() => setIsProxying(!isProxying)} />
+          </Tooltip>
         </Flex>
         <VStack width={"100%"}>
           <form onSubmit={submit} style={{ width: '100%', 'padding': '25px' }}>
@@ -83,7 +164,7 @@ export default function Outgoing() {
                 name='name'
                 placeholder="Name.."
                 size="lg"
-                onChange={onHandleChange}
+                onChange={onChange}
               />
             </FormControl>
             <FormControl>
@@ -93,7 +174,7 @@ export default function Outgoing() {
                 name='email'
                 placeholder="test@test.com"
                 size="lg"
-                onChange={onHandleChange}
+                onChange={onChange}
               />
             </FormControl>
             <FormControl>
@@ -103,7 +184,7 @@ export default function Outgoing() {
                 placeholder="18"
                 name='age'
                 size="lg"
-                onChange={onHandleChange}
+                onChange={onChange}
               />
             </FormControl>
             <FormControl mt={6}>
@@ -113,7 +194,7 @@ export default function Outgoing() {
                 name='password'
                 placeholder="*******"
                 size="lg"
-                onChange={onHandleChange}
+                onChange={onChange}
               />
             </FormControl>
           </form>
