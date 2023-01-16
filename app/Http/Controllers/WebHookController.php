@@ -28,77 +28,15 @@ class WebHookController extends Controller
      * @param Request $request
      * @return array
      */
-    public function moveUploadedFiles($request)
+    public function processUploadedFiles($request)
     {
         $allFiles = $request->allFiles();
         if (empty($allFiles)) {
-            return;
+            return [];
         }
-
-        $this->validateFiles($request);
-        $disk = Storage::disk('tmp');
-        $fileLinks = [];
-        foreach ($allFiles as $requestParamName => $files) {
-            if (is_array($files)) {
-                foreach ($files as $index => $file) {
-                    $disk->putFileAs('', $file, $file->hashName());
-                    $fileLinks[$requestParamName][$index] = $this->getTempUrl($disk, $file, 2);
-                }
-            } elseif (!empty($files)) {
-                $disk->putFileAs('', $files, $files->hashName());
-                $fileLinks[$requestParamName] = $this->getTempUrl($disk, $files, 2);
-            }
-        }
-        return $fileLinks;
+        $tempFileController = new TempFileController();
+        return $tempFileController->moveUploadedFiles($request);
     }
-
-    /**
-     * Generates temporary signed url for a file in a disk
-     *
-     * @param Filesystem $disk
-     * @param UploadedFile $file
-     * @param int $duration
-     *
-     * @return string
-     */
-    public function getTempUrl($disk, $file, $duration)
-    {
-        return $disk->temporaryUrl(
-            $file->hashName(),
-            now()->addHours($duration),
-            ['file' => $file->getClientOriginalName()]
-        );
-    }
-    /**
-     * Validates requested files
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function validateFiles($request)
-    {
-        $rules = [];
-        $messages = [];
-        foreach ($request->allFiles() as $key => $file) {
-            if (is_array($file)) {
-                $rules[$key . '.*'] = 'max:5120';
-                $messages[$key . '.*.max'] = 'The :attribute may not be greater than 5MB.';
-            } else {
-                $rules[$key] = 'max:5120';
-                $messages[$key . '.max'] = 'The :attribute may not be greater than 5MB.';
-            }
-        }
-
-        $validator = Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails()) {
-            throw new HttpResponseException(response()->json([
-                'success'   => false,
-                'message'   => 'Validation errors',
-                'data'      => $validator->errors()
-            ]));
-        }
-    }
-
     /**
      * Handle incoming request
      *
@@ -119,7 +57,7 @@ class WebHookController extends Controller
             }
         }
 
-        if ($fileLinks = $this->moveUploadedFiles($request)) {
+        if ($fileLinks = $this->processUploadedFiles($request)) {
             $formData = array_merge($formData, $fileLinks);
         }
 
@@ -174,17 +112,5 @@ class WebHookController extends Controller
     public function outgoingView()
     {
         return Inertia::render('Outgoing');
-    }
-
-    public function handleProxy(Request $request)
-    {
-        dd($request->all());
-        $client = new Client(['headers' => ['Authorization' => "Zoho-oauthtoken $accessToken"]]);
-        // $client->s
-        try {
-            $apiResponse = $client->get("https://www.zohoapis.{$queryParams['dataCenter']}/crm/v2/settings/layouts?module={$queryParams['module_api_name']}");
-        } catch (RequestException $e) {
-            return (string) $e->getResponse()->getBody();
-        }
     }
 }

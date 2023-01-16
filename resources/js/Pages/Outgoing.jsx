@@ -15,6 +15,7 @@ import {
   Switch,
   Tooltip
 } from '@chakra-ui/react';
+import { faker } from '@faker-js/faker';
 import { useForm, usePage } from '@inertiajs/inertia-react';
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
@@ -27,13 +28,19 @@ export default function Outgoing() {
   const toast = useToast();
   const { app } = usePage().props;
   const { onCopy, hasCopied } = useClipboard(`${app?.APP_URL}/api/v1/${token}`);
+  const fakeFormData = {
+    name: faker.internet.userName(),
+    email: faker.internet.exampleEmail(),
+    age: faker.datatype.number({max: 90}),
+    password: faker.internet.password()
+  }
   const [requestData, setRequestData] = useState({
     url: `${app?.APP_URL}/api/v1/${token}`,
     method: 'POST',
     headers: {},
     contentType: 'multipart/form-data',
     params: {},
-    formData: {},
+    formData: fakeFormData,
     urlencoded: {},
     raw: '',
     bodyType: 'formData'
@@ -122,6 +129,9 @@ export default function Outgoing() {
     e.preventDefault();
     fetch(getRequestURL(), getRequestOptions())
       .then((res) => {
+        const tempData = {...requestData}
+        tempData.formData = fakeFormData
+        setRequestData(tempData)
         toast({ variant: '#000', description: 'Sended!', position: 'bottom-right', containerStyle: { bg: '#000', color: 'white', borderRadius: '5px' } });
       })
     // post(`${app?.APP_URL}/api/v1/${token}`);
@@ -152,7 +162,7 @@ export default function Outgoing() {
             rounded={'md'}
             shouldWrapChildren
           >
-            <Switch id='proxy' onChange={() => setIsProxying(!isProxying)} />
+            <Switch id='proxy' onChange={() => setIsProxying(!isProxying)} isChecked={isProxying}/>
           </Tooltip>
         </Flex>
         <VStack width={"100%"}>
@@ -162,6 +172,8 @@ export default function Outgoing() {
               <Input
                 type="text"
                 name='name'
+                autoComplete='off'
+                value={requestData.formData?.name}
                 placeholder="Name.."
                 size="lg"
                 onChange={onChange}
@@ -172,6 +184,7 @@ export default function Outgoing() {
               <Input
                 type="email"
                 name='email'
+                value={requestData.formData?.email}
                 placeholder="test@test.com"
                 size="lg"
                 onChange={onChange}
@@ -185,6 +198,7 @@ export default function Outgoing() {
                 name='age'
                 size="lg"
                 onChange={onChange}
+                value={requestData.formData?.age}
               />
             </FormControl>
             <FormControl mt={6}>
@@ -192,6 +206,8 @@ export default function Outgoing() {
               <Input
                 type="password"
                 name='password'
+                autoComplete='off'
+                value={requestData.formData?.password}
                 placeholder="*******"
                 size="lg"
                 onChange={onChange}

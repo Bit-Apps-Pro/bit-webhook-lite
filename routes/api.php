@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProxyRequestController;
 use App\Http\Controllers\WebHookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::any('/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
-Route::post('/proxy', [WebHookController::class, 'handleProxy'])->name('proxy');
+Route::post('/proxy', [ProxyRequestController::class, 'handleProxy'])->name('proxy');
 
 
