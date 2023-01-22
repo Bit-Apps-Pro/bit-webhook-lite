@@ -17,13 +17,14 @@ import {
 } from '@chakra-ui/react';
 import { usePage } from '@inertiajs/inertia-react';
 import { useAtom } from 'jotai';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import QueryParams from '../Components/webhook/QueryParams';
 import Master from './Layouts/Master';
 import { default as fakeData } from '../static/fakeData.json'
+import fetchNewUrl from '../helper/fetchNewUrl';
 
 export default function Outgoing() {
-  const [token] = useAtom($randomUrl);
+  const [token, setToken] = useAtom($randomUrl);
   const [isProxying, setIsProxying] = useAtom($proxied);
   const toast = useToast();
   const { app } = usePage().props;
@@ -42,6 +43,19 @@ export default function Outgoing() {
     raw: '',
     bodyType: 'formData'
   })
+
+  useEffect(() => {
+    if (token === '') {
+      fetchNewUrl().then(url => {
+        if (url) {
+          setToken(url)
+          const tempData = { ...requestData }
+          tempData.url = route('webhook', url);
+          setRequestData(tempData)
+        }
+      })
+    }
+  }, [])
 
   const getRequestOptions = () => {
     let options = {}
