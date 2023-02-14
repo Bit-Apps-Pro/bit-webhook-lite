@@ -32,7 +32,8 @@
         }
         gtag('js', new Date());
 
-        gtag('config', 'G-3DVW8ZR3Z1');
+        // gtag('config', 'G-3DVW8ZR3Z1');
+        gtag('config', 'AW-739746057');
     </script>
 </body>
 
