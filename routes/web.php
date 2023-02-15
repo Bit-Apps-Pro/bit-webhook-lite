@@ -21,6 +21,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/difference-between-webhook-and-api', [HomeController::class, 'aboutWebhook'])->name('about.webhook');
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

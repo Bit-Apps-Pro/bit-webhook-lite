@@ -1,4 +1,5 @@
-import { Grid, GridItem } from '@chakra-ui/react';
+import { Grid, GridItem, Flex } from '@chakra-ui/react';
+import { Link } from '@inertiajs/inertia-react';
 import { Head, usePage } from '@inertiajs/inertia-react';
 import Header from './Header';
 export default function Master({ title, children }) {
@@ -7,7 +8,7 @@ export default function Master({ title, children }) {
   return (
     <>
       <Head title={`${title} - ${app.name}`} />
-        <Grid
+      <Grid
         templateAreas={`"header header" "nav main" "nav footer"`}
         gridTemplateRows={'0.15fr 5fr 0.1fr'}
         gridTemplateColumns={'0.1fr 1fr'}
@@ -16,11 +17,14 @@ export default function Master({ title, children }) {
         color='blackAlpha.700'
         fontWeight='bold'
         w='100%'
-        >
+      >
         <GridItem area={'header'}>
           <Header />
         </GridItem>
         {children}
+        <GridItem area={'footer'}>
+          <Link href={route('about.webhook')}>What is Webhook?</Link>
+        </GridItem>
       </Grid>
     </>
   )

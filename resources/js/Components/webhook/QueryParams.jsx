@@ -56,7 +56,7 @@ export default function QueryParams() {
 
   return (
     <GridItem p={4} shadow="md" borderWidth="1px" area={'param'}>
-      <Accordion defaultIndex={defaultOpen} allowMultiple>
+      <Accordion allowMultiple>
         <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
           <h2>
             <AccordionButton>

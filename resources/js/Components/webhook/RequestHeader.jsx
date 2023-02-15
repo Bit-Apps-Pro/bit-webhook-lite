@@ -8,11 +8,11 @@ import { $currentLog } from '../GlobalStates/GlobalStates';
 export default function RequestHeader() {
   const [currentLog] = useAtom($currentLog);
   const toast = useToast();
-  const webHookDeatis = currentLog ? JSON.parse(currentLog.webhook_details) : {};
+  const webHookDetails = currentLog ? JSON.parse(currentLog.webhook_details) : {};
 
   const onCopy = (e)=>{
     e.stopPropagation()
-    const copy = navigator.clipboard.writeText(JSON.stringify(webHookDeatis?.headers, null, 2))
+    const copy = navigator.clipboard.writeText(JSON.stringify(webHookDetails?.headers, null, 2))
     copy.then(()=> {
       toast({
         title: 'Copied',
@@ -28,7 +28,7 @@ export default function RequestHeader() {
 
   return (
     <GridItem p={4} shadow="md" borderWidth="1px" area={'rheader'}>
-      <Accordion defaultIndex={[0]} allowMultiple>
+      <Accordion allowMultiple>
         <AccordionItem borderRadius={5} borderWidth={1} marginBottom={5}>
           <h2>
             <AccordionButton>
@@ -45,10 +45,10 @@ export default function RequestHeader() {
             <TableContainer whiteSpace="normal">
               <Table size="sm">
                 <Tbody>
-                  {webHookDeatis?.headers && Object.keys(webHookDeatis?.headers).map((key, index) => (
+                  {webHookDetails?.headers && Object.keys(webHookDetails?.headers).map((key, index) => (
                     <Tr key={index}>
                     <Td>{key}</Td>
-                    <Td>{webHookDeatis?.headers[key]}</Td>
+                    <Td>{webHookDetails?.headers[key]}</Td>
                   </Tr>
                   ))}
                 </Tbody>
