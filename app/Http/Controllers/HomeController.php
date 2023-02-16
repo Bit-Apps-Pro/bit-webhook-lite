@@ -20,6 +20,6 @@ class HomeController extends Controller
 
     public function aboutWebhook()
     {
-        return Inertia::render('AboutWebhook');
+        return Inertia::render('AboutWebhook', ['ssr' => true]);
     }
 }

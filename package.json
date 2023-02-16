@@ -2,7 +2,7 @@
     "private": true,
     "scripts": {
         "dev": "vite",
-        "build": "vite build",
+        "build": "vite build && vite build --ssr",
         "echo:init": "laravel-echo-server init",
         "echo:start": "laravel-echo-server start"
     },
@@ -12,6 +12,7 @@
         "@inertiajs/inertia": "^0.11.0",
         "@inertiajs/inertia-react": "^0.8.1",
         "@inertiajs/progress": "^0.2.6",
+        "@inertiajs/server": "^0.1.0",
         "@tailwindcss/forms": "^0.5.3",
         "@vitejs/plugin-react": "^3.0.0",
         "alpinejs": "^3.4.2",

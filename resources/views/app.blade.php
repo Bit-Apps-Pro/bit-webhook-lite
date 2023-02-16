@@ -21,6 +21,9 @@
 </head>
 
 <body class="font-sans antialiased">
+    @if(Request::is('/'))
+    @php($__inertiaSsr = null)
+    @endif
     @inertia
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3DVW8ZR3Z1"></script>

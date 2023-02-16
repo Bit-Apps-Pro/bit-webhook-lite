@@ -125,7 +125,6 @@ export default function Home() {
             title="Generate new URL"
             body={(<><h1>Are you sure you want to generate new URL?</h1><br /><p><strong>Note</strong>: This this will change the URL and you will lose previous log data. </p></>)}
             action={action}
-            close={close}
           />
           <Button onClick={() => setIsOpen(true)}><Icon as={RepeatIcon} boxSize={3} /></Button>
         </Flex>
