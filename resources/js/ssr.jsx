@@ -1,15 +1,12 @@
 import { createInertiaApp } from "@inertiajs/react";
 import createServer from "@inertiajs/server";
 import ReactDOMServer from "react-dom/server";
-import route from "../../vendor/tightenco/ziggy/dist/index.m";
-
-const appName = "Laravel";
 
 createServer((page) =>
     createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
-        title: (title) => `${title} - ${appName}`,
+        title: (title) => `${title}`,
         resolve: (name) => {
             const pages = import.meta.glob("./Pages/**/*.jsx", { eager: true });
             return pages[`./Pages/${name}.jsx`];
