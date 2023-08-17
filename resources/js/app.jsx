@@ -1,23 +1,24 @@
-import './bootstrap';
-import '../css/app.css';
+import "../css/app.css";
+import "./bootstrap";
 
-import { createRoot, hydrateRoot } from 'react-dom/client';
-import { createInertiaApp } from '@inertiajs/inertia-react';
-import { InertiaProgress } from '@inertiajs/progress';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ChakraProvider } from '@chakra-ui/react'
-import Master from './Pages/Layouts/Master'
-import BroadcastWebhook from './Components/webhook/BroadcastWebhook';
+import { ChakraProvider } from "@chakra-ui/react";
+import { createInertiaApp } from "@inertiajs/react";
+import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
+import { createRoot, hydrateRoot } from "react-dom/client";
+import BroadcastWebhook from "./Components/webhook/BroadcastWebhook";
+import Master from "./Layouts/Master";
 
 createInertiaApp({
     title: (title) => `${title}`,
     resolve: (name) => {
-        const page = resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx'))
-        page.layout = page.layout || Master
-        return page
+        const page = resolvePageComponent(
+            `./Pages/${name}.jsx`,
+            import.meta.glob("./Pages/**/*.jsx")
+        );
+        page.layout = page.layout || Master;
+        return page;
     },
     setup({ el, App, props }) {
-        console.log('props', props.initialPage.props)
         if (props.initialPage.props?.ssr) {
             hydrateRoot(
                 el,
@@ -35,7 +36,7 @@ createInertiaApp({
             );
         }
     },
+    progress: {
+        color: "#4B5563",
+    },
 });
-
-InertiaProgress.init({ color: '#4B5563' });
-{/* <EchoComp/> */ }

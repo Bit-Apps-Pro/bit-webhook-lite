@@ -11,27 +11,21 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-        Inertia::share(
-            [
-                'app' => [
-                    'name' => config('app.name'),
-                    'APP_URL' => config('app.url'),
-                ],
-            ]
-        );
+        Inertia::share([
+            'app' => [
+                'name' => config('app.name'),
+                'APP_URL' => config('app.url'),
+            ],
+        ]);
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Storage::disk('tmp')
             ->buildTemporaryUrlsUsing(
