@@ -6,7 +6,6 @@ use App\Http\Controllers\TempFileController;
 use App\Http\Controllers\UrlSlugGenerateController;
 use App\Http\Controllers\WebHookController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 /*
@@ -21,7 +20,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/difference-between-webhook-and-api', [HomeController::class, 'aboutWebhook'])->name('about.webhook');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -31,12 +30,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+require __DIR__ . '/auth.php';
+
+Route::get('/difference-between-webhook-and-api', [HomeController::class, 'aboutWebhook'])->name('about.webhook');
+
 Route::get('/create/url', [UrlSlugGenerateController::class, 'createNewRandomURl'])->name('create-url');
 
 Route::get('/outgoing', [WebHookController::class, 'outgoingView'])->name('outgoing.view');
 
-// Route::any('/api/v1/{url_slug}', [WebHookController::class, 'getWebHookData'])->name('webhook');
 Route::get('/url/refresh', [UrlSlugGenerateController::class, 'refreshUrl'])->name('refresh-url');
 
 Route::get('/tmp/{path}', [TempFileController::class, 'handleDownload'])->name('tmp');
-require __DIR__ . '/auth.php';
