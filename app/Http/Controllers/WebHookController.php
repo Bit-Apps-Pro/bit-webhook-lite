@@ -91,7 +91,7 @@ class WebHookController extends Controller
         $isValidURL = UrlSlugGenerate::where('url_slug', $url_slug)->first();
 
         if (!$isValidURL) {
-            return response()->json(['success' => false, 'message' => 'Invalid URL']);
+            return response()->json(['success' => false, 'message' => 'Invalid URL'], 404);
         }
 
         $details = $this->getRequestDetails($request);
